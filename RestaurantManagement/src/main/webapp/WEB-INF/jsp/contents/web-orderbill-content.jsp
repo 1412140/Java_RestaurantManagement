@@ -1,0 +1,48 @@
+<%@page import="Entity.OrderBill"%>
+<%@page import="java.util.List"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
+<!-- Breadcrumbs-->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="#">Branch management</a>
+    </li>
+    <li class="breadcrumb-item active">Web OrderBill list</li>
+</ol>
+
+<%List<OrderBill> web_order_list = (List<OrderBill>) request.getAttribute("web_order_list"); %> 
+<div class="card mb-3">
+    <div class="card-header">
+        <i class="fa fa-table"></i>Branch list
+        <a href="/RestaurantManagement/new-branch"><button type="button" class="btn btn-primary btn-sm">New branch</button></a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Customer Id</th>
+                        <th>Branch Id</th>
+                        <th>Status</th>
+                        <th>Sum Money</th>
+                      
+                        <th style="width: 10%">Action</th>
+                    </tr>
+                </thead>
+                <% for (OrderBill b : web_order_list) {%>
+                <tbody>
+                <td><%= b.getCustomerId()%></td>
+                <td><%= b.getBranchId()%></td>
+                <td><%= b.getStatus()%></td>
+                <td><%= b.getSumMoney()%></td>
+                
+                <td class="text-center">
+                     <a href="/RestaurantManagement/edit-branch/<%=b.getId()%>">
+                        <button title = "Edit" type="button" class="btn btn-success btn-sm" ><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+                    </a>
+                                   </tbody>
+                <% }%>
+            </table>
+        </div>
+    </div>
+</div>
