@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import static org.apache.xalan.xsltc.compiler.util.Type.Int;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -127,12 +128,51 @@ public class orderCustomerController  {
     public String WebOrderBill(HttpServletRequest request, HttpServletResponse response, Model model)
     {
 
-        List<OrderBill> web_order_list = orderBillDAO.Web_OrderBillList();
+      //  List<Object[]>web_order_list = orderBillDAO.getOrderBill_Web();
+        List<OrderBill>web_order_list = orderBillDAO.Web_OrderBillList();
+        List<Integer> cusList = new ArrayList<Integer>();
+        List<Integer> cusList2 = new ArrayList<Integer>();
+        List<Customer> cusname = new ArrayList<Customer>();
+        List<Branch> brname = new ArrayList<Branch>();
         model.addAttribute("web_order_list", web_order_list);
-       
-       
-        return"webOrderBill.jsp";
-       
+        for (int i=0;i<=web_order_list.size()-1;i++)
+        {
+            int t = web_order_list.get(i).getCustomerId();
+            cusList.add(t);
+        }
+        
+        for (int i=0;i<=web_order_list.size()-1;i++)
+        {
+            int t = web_order_list.get(i).getBranchId();
+            cusList2.add(t);
+        }
+        
+        for (int i=0; i<=cusList.size()-1;i++)
+        {
+            cusname.add(customerDAO.getCustomerInfo(cusList.get(i)));
+        }
+        
+        for (int i=0; i<=cusList2.size()-1;i++)
+        {
+            brname.add(branchDAO.getBranchInfo(cusList2.get(i)));
+        }
+        model.addAttribute("cusname", cusname);
+        model.addAttribute("brname", brname);
+        return"webOrderBill.jsp";  
+    }
+    
+     @RequestMapping(value = "/edit-status-bill", method = RequestMethod.GET)
+    public String editStatusBill(HttpServletRequest request,
+            @RequestParam(value = "orderdetailId", required = true) String orderdetailId, Model model
+    ) {
+        OrderDetail orderdetail = orderDetailDAO.getOrderDetailInfo(Integer.parseInt(orderdetailId));
+        orderdetail.setDelFlag(1);
+        boolean result = orderDetailDAO.updateOrderDetail(orderdetail);
+        if (result == true) {
+            return "redirect:web-orderbill";
+        } else {
+            return "redirect:home";
+        }
     }
     @RequestMapping(value="/order-detail",  method = RequestMethod.GET)
     public String DetailOrder(HttpServletRequest request, HttpServletResponse response, Model model)
